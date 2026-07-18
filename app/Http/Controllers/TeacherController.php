@@ -128,7 +128,7 @@ class TeacherController extends Controller
         }
 
         $request->validate([
-            'username' => 'required|string|max:255|unique:users,username',
+            'username' => 'required|string|max:255|unique:users_congak,username',
             'name' => 'required|string|max:255',
             'password' => 'required|string|min:6',
         ]);
