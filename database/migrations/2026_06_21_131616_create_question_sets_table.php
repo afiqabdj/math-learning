@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('question_sets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('teacher_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('teacher_id')->constrained('users_congak')->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('difficulty', ['easy', 'medium', 'hard'])->default('easy');

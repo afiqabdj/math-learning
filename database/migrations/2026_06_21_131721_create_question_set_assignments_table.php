@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('question_set_assignments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('question_set_id')->constrained('question_sets')->onDelete('cascade');
-            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('users_congak')->onDelete('cascade');
             $table->enum('status', ['assigned', 'in_progress', 'completed'])->default('assigned');
             $table->timestamp('assigned_at')->useCurrent();
             $table->timestamp('completed_at')->nullable();

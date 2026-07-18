@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('student_attempts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('users_congak')->onDelete('cascade');
             $table->foreignId('question_set_id')->constrained('question_sets')->onDelete('cascade');
             $table->foreignId('question_id')->constrained('questions')->onDelete('cascade');
             $table->integer('student_answer');
