@@ -30,7 +30,7 @@ const levels11To15 = {
             $lastAnswer = $answer;
             
             $level11Questions[] = [
-                'text' => '__ + ' . $givenNumber . ' = ' . $result,
+                'text' => '⬜ + ' . $givenNumber . ' = ' . $result,
                 'answer' => $answer,
                 'type' => 'missing'
             ];
@@ -69,7 +69,7 @@ const levels11To15 = {
             $lastAnswer = $answer;
             
             $level12Questions[] = [
-                'text' => '__ + ' . $givenNumber . ' = ' . $result,
+                'text' => '⬜ + ' . $givenNumber . ' = ' . $result,
                 'answer' => $answer,
                 'type' => 'missing'
             ];
@@ -99,7 +99,7 @@ const levels11To15 = {
             }
             
             $level11Pool[] = [
-                'text' => '__ + ' . $givenNumber . ' = ' . $result,
+                'text' => '⬜ + ' . $givenNumber . ' = ' . $result,
                 'answer' => $answer
             ];
         }
@@ -126,7 +126,7 @@ const levels11To15 = {
             }
             
             $level12Pool[] = [
-                'text' => '__ + ' . $givenNumber . ' = ' . $result,
+                'text' => '⬜ + ' . $givenNumber . ' = ' . $result,
                 'answer' => $answer
             ];
         }
@@ -152,7 +152,7 @@ const levels11To15 = {
             $answer = mt_rand(1, 9);
             $result = 10 + $answer;
             $level9Pool[] = [
-                'text' => '10 + __ = ' . $result,
+                'text' => '10 + ⬜ = ' . $result,
                 'answer' => $answer
             ];
         }
@@ -175,7 +175,7 @@ const levels11To15 = {
             }
             
             $level10Pool[] = [
-                'text' => '__ + ' . $givenNumber . ' = ' . $result,
+                'text' => '⬜ + ' . $givenNumber . ' = ' . $result,
                 'answer' => $answer
             ];
         }
@@ -201,18 +201,18 @@ const levels11To15 = {
             $givenNumber = mt_rand(0, 10);
             $answer = 10 - $givenNumber;
             $level6Pool[] = [
-                'text' => '__ + ' . $givenNumber . ' = 10',
+                'text' => '⬜ + ' . $givenNumber . ' = 10',
                 'answer' => $answer
             ];
         }
         
-        // Pool from Level 7 (x + __ = 10)
+        // Pool from Level 7 (x + ⬜ = 10)
         $level7Pool = [];
         for ($j = 0; $j < 8; $j++) {
             $givenNumber = mt_rand(0, 10);
             $answer = 10 - $givenNumber;
             $level7Pool[] = [
-                'text' => $givenNumber . ' + __ = 10',
+                'text' => $givenNumber . ' + ⬜ = 10',
                 'answer' => $answer
             ];
         }
@@ -225,9 +225,9 @@ const levels11To15 = {
             $answer = 10 - $givenNumber;
             
             if ($position === 0) {
-                $text = '__ + ' . $givenNumber . ' = 10';
+                $text = '⬜ + ' . $givenNumber . ' = 10';
             } else {
-                $text = $givenNumber . ' + __ = 10';
+                $text = $givenNumber . ' + ⬜ = 10';
             }
             
             $level8Pool[] = [

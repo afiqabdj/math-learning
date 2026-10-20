@@ -11,14 +11,16 @@ class StudentAttempt extends Model
         'student_id',
         'question_set_id',
         'question_id',
-        'student_answer',
+        'student_answer',  // Make sure this matches your database column
         'is_correct',
         'time_taken',
-        'attempt_number'
+        'attempt_number',
+        'attempted_at',
     ];
 
     protected $casts = [
-        'is_correct' => 'boolean'
+        'is_correct' => 'boolean',
+        'attempted_at' => 'datetime',
     ];
 
     public function student(): BelongsTo

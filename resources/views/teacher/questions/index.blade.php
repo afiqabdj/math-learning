@@ -222,13 +222,13 @@
         // Toggle public status
         function togglePublic(setId) {
             Swal.fire({
-                title: 'Toggle Public Status?',
-                text: 'This will make the question set available to all teachers.',
+                title: 'Change Visibility Status?',
+                text: 'Are you sure you want to change the visibility of this question set.',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#5C3A1E',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, toggle it!'
+                confirmButtonText: 'Yes, change it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(`/teacher/questions/${setId}/toggle-public`, {

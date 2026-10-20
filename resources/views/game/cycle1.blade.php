@@ -258,7 +258,7 @@
             let displayText = currentQuestion.text;
             // Add = ? for addition type questions
             if (!displayText.includes('=')) {
-                displayText = currentQuestion.text + " = ?";
+                displayText = currentQuestion.text + " = ⬜";
             }
 
             document.getElementById('question').innerHTML = displayText;

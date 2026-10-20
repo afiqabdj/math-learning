@@ -137,7 +137,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/teacher/questions/{id}', [TeacherQuestionController::class, 'destroy'])->name('teacher.questions.destroy');
     Route::post('/teacher/questions/{id}/toggle-public', [TeacherQuestionController::class, 'togglePublic'])->name('teacher.questions.toggle-public');
     Route::get('/teacher/questions/{id}/students', [TeacherQuestionController::class, 'students'])->name('teacher.questions.students');
-  Route::get('/teacher/questions/{assignmentId}/students/{studentId}/results', 
+    Route::get(
+        '/teacher/questions/{assignmentId}/students/{studentId}/results',
         [TeacherQuestionController::class, 'viewStudentResults']
     )->name('teacher.questions.students.results');
 });
@@ -150,6 +151,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/student/assignments/{id}/complete', [StudentAssignmentController::class, 'complete'])->name('student.assignments.complete');
     Route::get('/student/assignments/{id}/results', [StudentAssignmentController::class, 'results'])->name('student.assignments.results');
     Route::post('/student/assignments/enroll', [StudentAssignmentController::class, 'enroll'])->name('student.assignments.enroll');
+    Route::get('/student/assignments/{id}/attempts', [StudentAssignmentController::class, 'getAttempts'])->name('student.assignments.attempts');
+    Route::get('/student/assignments/{id}/timer', [StudentAssignmentController::class, 'getTimerStatus'])->name('student.assignments.timer');
+    Route::get('/student/assignments/{id}/progress', [StudentAssignmentController::class, 'getProgress'])->name('student.assignments.progress');
+    Route::post('/student/assignments/{id}/save-progress', [StudentAssignmentController::class, 'saveProgress'])->name('student.assignments.save-progress');
 });
 
 /////////////////API ROUTES///////////////////////////////

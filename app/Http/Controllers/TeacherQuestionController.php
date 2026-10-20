@@ -36,12 +36,14 @@ class TeacherQuestionController extends Controller
                 'number_of_questions' => 'required|integer|min:1|max:50',
                 'min_value' => 'required|integer|min:0',
                 'max_value' => 'required|integer|gt:min_value',
+                'operation_type' => 'required|in:addition,subtraction',
             ]);
 
             $questions = $this->generateQuestionsArray(
                 $request->number_of_questions,
                 $request->min_value,
-                $request->max_value
+                $request->max_value,
+                $request->operation_type
             );
 
             return response()->json([
@@ -71,6 +73,7 @@ class TeacherQuestionController extends Controller
                 'is_public' => 'boolean',
                 'min_value' => 'required|integer|min:0',
                 'max_value' => 'required|integer|gt:min_value',
+                'operation_type' => 'required|in:addition,subtraction',
                 'questions' => 'required|array|min:1',
             ]);
 
@@ -78,7 +81,7 @@ class TeacherQuestionController extends Controller
                 'teacher_id' => Auth::id(),
                 'title' => $request->title,
                 'description' => $request->description,
-                'operation_type' => 'addition', // Always addition
+                'operation_type' => $request->operation_type, // Now dynamic
                 'number_of_questions' => $request->number_of_questions,
                 'time_limit' => $request->time_limit,
                 'is_public' => $request->is_public ?? false,
@@ -121,8 +124,8 @@ class TeacherQuestionController extends Controller
         }
     }
 
-    // Generate questions array - ADDITION ONLY
-    private function generateQuestionsArray($count, $minValue, $maxValue)
+    // Generate questions array with operation type support
+    private function generateQuestionsArray($count, $minValue, $maxValue, $operationType = 'addition')
     {
         $questions = [];
 
@@ -130,72 +133,152 @@ class TeacherQuestionController extends Controller
             // Randomly choose question type
             $type = $this->getRandomQuestionType($i, $count);
 
-            switch ($type) {
-                case 'two_numbers':
-                    // Two numbers addition: num1 + num2 = answer
-                    $num1 = rand($minValue, $maxValue);
-                    $num2 = rand($minValue, $maxValue - $num1);
-                    $answer = $num1 + $num2;
-                    $display = "{$num1} + {$num2} = ?";
+            if ($operationType === 'subtraction') {
+                // Subtraction questions
+                switch ($type) {
+                    case 'two_numbers':
+                        // Two numbers subtraction: num1 - num2 = answer (num1 >= num2)
+                        $num1 = rand($minValue, $maxValue);
+                        $num2 = rand($minValue, $num1);
+                        $answer = $num1 - $num2;
+                        $display = "{$num1} - {$num2} = ⬜";
 
-                    $question = [
-                        'question_number' => $i,
-                        'type' => 'two_numbers',
-                        'num1' => $num1,
-                        'num2' => $num2,
-                        'num3' => null,
-                        'answer' => $answer,
-                        'missing_position' => null,
-                        'display' => $display,
-                        'answer_display' => $answer
-                    ];
-                    break;
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'two_numbers',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => null,
+                            'answer' => $answer,
+                            'missing_position' => null,
+                            'display' => $display,
+                            'answer_display' => $answer,
+                            'operation' => 'subtraction'
+                        ];
+                        break;
 
-                case 'three_numbers':
-                    // Three numbers addition: num1 + num2 + num3 = answer
-                    $num1 = rand($minValue, floor($maxValue / 2));
-                    $num2 = rand($minValue, floor(($maxValue - $num1) / 2));
-                    $num3 = rand($minValue, $maxValue - $num1 - $num2);
-                    $answer = $num1 + $num2 + $num3;
-                    $display = "{$num1} + {$num2} + {$num3} = ?";
+                    case 'three_numbers':
+                        // Three numbers subtraction: num1 - num2 - num3 = answer (num1 >= num2 + num3)
+                        $num1 = rand($minValue + 2, $maxValue);
+                        $num2 = rand($minValue, floor($num1 / 2));
+                        $num3 = rand($minValue, $num1 - $num2);
+                        $answer = $num1 - $num2 - $num3;
+                        $display = "{$num1} - {$num2} - {$num3} = ⬜";
 
-                    $question = [
-                        'question_number' => $i,
-                        'type' => 'three_numbers',
-                        'num1' => $num1,
-                        'num2' => $num2,
-                        'num3' => $num3,
-                        'answer' => $answer,
-                        'missing_position' => null,
-                        'display' => $display,
-                        'answer_display' => $answer
-                    ];
-                    break;
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'three_numbers',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => $num3,
+                            'answer' => $answer,
+                            'missing_position' => null,
+                            'display' => $display,
+                            'answer_display' => $answer,
+                            'operation' => 'subtraction'
+                        ];
+                        break;
 
-                case 'missing_number':
-                    // Missing number addition: num1 + ? + num3 = answer
-                    $num1 = rand($minValue, $maxValue);
-                    $num3 = rand($minValue, $maxValue);
-                    $answer = rand($num1 + $num3 + 1, $maxValue + $num1 + $num3);
-                    $num2 = $answer - $num1 - $num3;
-                    $missing_position = rand(1, 3);
-                    $parts = [$num1, $num2, $num3];
-                    $displayParts = $parts;
-                    $displayParts[$missing_position - 1] = '?';
-                    $display = implode(' + ', $displayParts) . " = {$answer}";
+                    case 'missing_number':
+                        // Missing number subtraction: num1 - ? - num3 = answer
+                        // or num1 - num2 - ? = answer
+                        $num1 = rand($minValue + 2, $maxValue);
+                        $num2 = rand($minValue, floor($num1 / 2));
+                        $num3 = rand($minValue, $num1 - $num2);
+                        $answer = $num1 - $num2 - $num3;
+                        
+                        $missing_position = rand(1, 3);
+                        $parts = [$num1, $num2, $num3];
+                        $displayParts = $parts;
+                        $displayParts[$missing_position - 1] = '⬜';
+                        $display = implode(' - ', $displayParts) . " = {$answer}";
 
-                    $question = [
-                        'question_number' => $i,
-                        'type' => 'missing_number',
-                        'num1' => $num1,
-                        'num2' => $num2,
-                        'num3' => $num3,
-                        'answer' => $answer,
-                        'missing_position' => $missing_position,
-                        'display' => $display,
-                        'answer_display' => $parts[$missing_position - 1]
-                    ];
-                    break;
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'missing_number',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => $num3,
+                            'answer' => $answer,
+                            'missing_position' => $missing_position,
+                            'display' => $display,
+                            'answer_display' => $parts[$missing_position - 1],
+                            'operation' => 'subtraction'
+                        ];
+                        break;
+                }
+            } else {
+                // Addition questions (original logic)
+                switch ($type) {
+                    case 'two_numbers':
+                        // Two numbers addition: num1 + num2 = answer
+                        $num1 = rand($minValue, $maxValue);
+                        $num2 = rand($minValue, $maxValue - $num1);
+                        $answer = $num1 + $num2;
+                        $display = "{$num1} + {$num2} = ⬜";
+
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'two_numbers',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => null,
+                            'answer' => $answer,
+                            'missing_position' => null,
+                            'display' => $display,
+                            'answer_display' => $answer,
+                            'operation' => 'addition'
+                        ];
+                        break;
+
+                    case 'three_numbers':
+                        // Three numbers addition: num1 + num2 + num3 = answer
+                        $num1 = rand($minValue, floor($maxValue / 2));
+                        $num2 = rand($minValue, floor(($maxValue - $num1) / 2));
+                        $num3 = rand($minValue, $maxValue - $num1 - $num2);
+                        $answer = $num1 + $num2 + $num3;
+                        $display = "{$num1} + {$num2} + {$num3} = ⬜";
+
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'three_numbers',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => $num3,
+                            'answer' => $answer,
+                            'missing_position' => null,
+                            'display' => $display,
+                            'answer_display' => $answer,
+                            'operation' => 'addition'
+                        ];
+                        break;
+
+                    case 'missing_number':
+                        // Missing number addition: num1 + ? + num3 = answer
+                        $num1 = rand($minValue, $maxValue);
+                        $num3 = rand($minValue, $maxValue);
+                        $answer = rand($num1 + $num3 + 1, $maxValue + $num1 + $num3);
+                        $num2 = $answer - $num1 - $num3;
+                        $missing_position = rand(1, 3);
+                        $parts = [$num1, $num2, $num3];
+                        $displayParts = $parts;
+                        $displayParts[$missing_position - 1] = '⬜';
+                        $display = implode(' + ', $displayParts) . " = {$answer}";
+
+                        $question = [
+                            'question_number' => $i,
+                            'type' => 'missing_number',
+                            'num1' => $num1,
+                            'num2' => $num2,
+                            'num3' => $num3,
+                            'answer' => $answer,
+                            'missing_position' => $missing_position,
+                            'display' => $display,
+                            'answer_display' => $parts[$missing_position - 1],
+                            'operation' => 'addition'
+                        ];
+                        break;
+                }
             }
 
             $questions[] = $question;
@@ -336,7 +419,7 @@ class TeacherQuestionController extends Controller
                     'status' => $assignment->status,
                     'score' => $assignment->score,
                     'completed_at' => $assignment->completed_at,
-                    'assignment_id' => $assignment->id, // Add this
+                    'assignment_id' => $assignment->id,
                 ];
 
                 $students[] = $studentData;
@@ -367,32 +450,32 @@ class TeacherQuestionController extends Controller
                 ->with('error', 'Failed to load student data.');
         }
     }
-// View student's assignment results (for teachers)
-public function viewStudentResults($assignmentId, $studentId)
-{
-    try {
-        // Check if the teacher owns this question set
-        $assignment = QuestionSetAssignment::with(['questionSet', 'student'])
-            ->where('id', $assignmentId)
-            ->where('student_id', $studentId)
-            ->firstOrFail();
-        
-        // Verify the teacher owns this question set
-        if ($assignment->questionSet->teacher_id !== Auth::id()) {
-            abort(403, 'Unauthorized access.');
+
+    // View student's assignment results (for teachers)
+    public function viewStudentResults($assignmentId, $studentId)
+    {
+        try {
+            // Check if the teacher owns this question set
+            $assignment = QuestionSetAssignment::with(['questionSet', 'student'])
+                ->where('id', $assignmentId)
+                ->where('student_id', $studentId)
+                ->firstOrFail();
+
+            // Verify the teacher owns this question set
+            if ($assignment->questionSet->teacher_id !== Auth::id()) {
+                abort(403, 'Unauthorized access.');
+            }
+
+            $attempts = StudentAttempt::where('student_id', $studentId)
+                ->where('question_set_id', $assignment->question_set_id)
+                ->with('question')
+                ->get()
+                ->groupBy('question_id');
+
+            return view('teacher.questions.student-results', compact('assignment', 'attempts'));
+        } catch (\Exception $e) {
+            Log::error('View student results error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to load results.');
         }
-        
-        $attempts = StudentAttempt::where('student_id', $studentId)
-            ->where('question_set_id', $assignment->question_set_id)
-            ->with('question')
-            ->get()
-            ->groupBy('question_id');
-        
-        return view('teacher.questions.student-results', compact('assignment', 'attempts'));
-        
-    } catch (\Exception $e) {
-        Log::error('View student results error: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Failed to load results.');
     }
-}
 }

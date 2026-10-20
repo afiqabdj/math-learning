@@ -118,7 +118,7 @@ for (let i = 0; i < 10; i++) {
     const answer = result - x;
     
     levels21To25[22].questions.push({
-        text: `__ + ${x} = ${result}`,
+        text: `⬜ + ${x} = ${result}`,
         answer: answer,
         type: 'missing_first_22'
     });
@@ -140,7 +140,7 @@ for (let i = 0; i < 10; i++) {
     const answer = result - x;
     
     levels21To25[23].questions.push({
-        text: `__ + ${x} = ${result}`,
+        text: `⬜ + ${x} = ${result}`,
         answer: answer,
         type: 'missing_first_23'
     });
@@ -162,7 +162,7 @@ for (let i = 0; i < 10; i++) {
     const answer = result - x;
     
     levels21To25[24].questions.push({
-        text: `${x} + __ = ${result}`,
+        text: `${x} + ⬜ = ${result}`,
         answer: answer,
         type: 'missing_second_24'
     });
@@ -184,7 +184,7 @@ for (let i = 0; i < 10; i++) {
     const answer = result - x;
     
     levels21To25[25].questions.push({
-        text: `${x} + __ = ${result}`,
+        text: `${x} + ⬜ = ${result}`,
         answer: answer,
         type: 'missing_second_25'
     });

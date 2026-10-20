@@ -67,9 +67,9 @@ const levels6To10 = {
                 $answer = 10 - $givenNumber;
                 
                 if ($position === 0) {
-                    $text = '__ + ' . $givenNumber . ' = 10';
+                    $text = '⬜ + ' . $givenNumber . ' = 10';
                 } else {
-                    $text = $givenNumber . ' + __ = 10';
+                    $text = $givenNumber . ' + ⬜ = 10';
                 }
                 $attempts++;
                 if ($attempts > 30) break;

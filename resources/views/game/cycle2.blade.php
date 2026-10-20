@@ -243,7 +243,7 @@
         const q = currentQuestions[currentIndex];
         let displayText = q.text;
         if (q.type === 'addition' || q.type === 'addition_level2' || q.type === 'addition_up_to_20') {
-            displayText = q.text + " = ?";
+            displayText = q.text + " = ⬜";
         }
 
         document.getElementById('question').innerHTML = displayText;
