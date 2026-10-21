@@ -313,13 +313,13 @@
             if (!displayText) {
                 const separator = operationType === 'subtraction' ? ' - ' : ' + ';
                 if (question.type === 'two_numbers') {
-                    displayText = `${question.num1}${separator}${question.num2} = ?`;
+                    displayText = `${question.num1}${separator}${question.num2} = ⬜`;
                 } else if (question.type === 'three_numbers') {
-                    displayText = `${question.num1}${separator}${question.num2}${separator}${question.num3} = ?`;
+                    displayText = `${question.num1}${separator}${question.num2}${separator}${question.num3} = ⬜`;
                 } else if (question.type === 'missing_number') {
                     const parts = [question.num1, question.num2, question.num3];
                     const displayParts = parts;
-                    displayParts[question.missing_position - 1] = '?';
+                    displayParts[question.missing_position - 1] = '⬜';
                     displayText = displayParts.join(separator) + ` = ${question.answer}`;
                 }
             }
